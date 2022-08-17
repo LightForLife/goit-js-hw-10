@@ -18,3 +18,9 @@ body {
   max-width: 320px;
   margin-bottom: 16px;
 }
+
+.country-item {
+  width: 30px;
+  height: 50px;
+  display: inline;
+}
