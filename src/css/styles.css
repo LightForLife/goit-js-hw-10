@@ -23,20 +23,20 @@ input {
   width: 320px;
 }
 
-/* .country-list {
-  display: block;
-} */
-
 .country-item {
-  display: block;
-  font-weight: 700;
-  font-size: 28px;
-  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 16px;
 }
 
-.country-item {
-  font-size: 16px;
-  /* text-align: center; */
+.country-item:not(:last-child) {
+  margin-bottom: 15px;
+}
+
+.country-item-card {
+  font-weight: 700;
+  font-size: 28px;
 }
 
 .image-flag {
@@ -47,7 +47,6 @@ input {
 .country-list {
   padding: 0;
   margin: 0;
-  /* display: block; */
 }
 
 .country-info {
@@ -55,7 +54,6 @@ input {
 }
 .text-info {
   margin: 0px 0px 8px 0px;
-  /* font-weight: 500; */
   font-size: 18px;
 }
 
