@@ -1,5 +1,7 @@
+import { fetchCountries } from './fetchCountries';
 import './css/styles.css';
 import debounce from 'lodash.debounce';
+import Notiflix from 'notiflix';
 
 const DEBOUNCE_DELAY = 300;
 
@@ -12,43 +14,62 @@ const refs = {
 refs.input.addEventListener('input', debounce(readInput, DEBOUNCE_DELAY));
 
 function readInput(event) {
-  const inputText = refs.input.value;
-  console.log(inputText);
-  fetchCountries(inputText).then(renderCountryList).catch(onFetchError);
-}
+  if (refs.input.value === '') {
+    return;
+  }
+  refs.countryList.innerHTML = '';
+  refs.countryInfo.innerHTML = '';
 
-function fetchCountries(name) {
-  return fetch(`https://restcountries.com/v3.1/name/${name}`).then(response => {
-    return response.json();
-  });
+  console.log(refs.input.value);
+  const inputText = refs.input.value.trim();
+  fetchCountries(inputText).then(renderCountryList).catch(onFetchError);
 }
 
 function renderCountryList(country) {
   const listMarkup = createCountryList(country);
-  refs.countryList.insertAdjacentHTML('beforeend', listMarkup);
-
   const infoMarkup = createCountryInfo(country);
-  refs.countryInfo.insertAdjacentHTML('beforeend', infoMarkup);
+  if (country.length > 10) {
+    Notiflix.Notify.info(
+      'Too many matches found. Please enter a more specific name.',
+      {
+        timeout: 2000,
+        fontSize: '16px',
+        width: '320px',
+      }
+    );
+  } else if (country.length > 1 && country.length <= 10) {
+    refs.countryList.insertAdjacentHTML('beforeend', listMarkup);
+  } else {
+    refs.countryList.insertAdjacentHTML('beforeend', listMarkup);
+    refs.countryInfo.insertAdjacentHTML('beforeend', infoMarkup);
+  }
 }
 
 function createCountryList(country) {
   return country
     .map(({ name, flags }) => {
-      return `<li class="country-item"><img src="${flags.svg}" alt="" width="50" height="30">${name.official}</li>`;
+      return `<li class="country-item"><img  class = "image-flag" src="${flags.svg}" alt="" width="50" height="30">${name.official}</li>`;
+    })
+    .join('');
+}
+
+function createCountryInfo(country) {
+  return country
+    .map(({ capital, population, languages }) => {
+      const listLanguages = createListLanguages(languages);
+      return `<p class = "text-info"><span class="header-info">Capital:</span> ${capital}</p><p class = "text-info"><span class="header-info">Population:</span> ${population}</p><p class = "text-info"> <span class="header-info">Languages:</span> ${listLanguages}</p>`;
     })
     .join();
 }
 
-// refs.countryList.insertAdjacentHTML('beforeend');
-// const infoMarkup = createCountryInfo();
-function createCountryInfo(country) {
-  return country
-    .map(({ name, flags }) => {
-      return `<p>Capital${name}</p><p>Population</p><p>Languages</p>`;
-    })
-    .join();
+function createListLanguages(languages) {
+  return Object.values(languages).join(', ');
 }
 
 function onFetchError(error) {
-  console.log(error);
+  Notiflix.Notify.failure('Oops, there is no country with that name', {
+    timeout: 2000,
+    fontSize: '16px',
+    width: '320px',
+  });
 }
