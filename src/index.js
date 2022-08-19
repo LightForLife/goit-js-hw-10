@@ -17,11 +17,11 @@ function readInput(event) {
   if (refs.input.value === '') {
     refs.countryList.innerHTML = '';
     refs.countryInfo.innerHTML = '';
+    return;
   }
   refs.countryList.innerHTML = '';
   refs.countryInfo.innerHTML = '';
 
-  console.log(refs.input.value);
   const inputText = refs.input.value.trim();
   fetchCountries(inputText).then(renderCountryList).catch(onFetchError);
 }
